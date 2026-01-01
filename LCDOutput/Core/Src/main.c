@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "OutputFunctions.h"
+#include <stdint.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -70,7 +71,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	uint8_t testData[1] = { 0x24 };
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -95,22 +96,38 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_StatusTypeDef ret;
-  ret = HAL_I2C_IsDeviceReady(&hi2c1, (0x27<<1), 3, 100);
+  ret = HAL_I2C_IsDeviceReady(&hi2c1, (0x27<<1), 3, 1000);
 
   if (ret == HAL_OK) {
       HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET); // success LED
   } else {
       HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
        uint32_t error = HAL_I2C_GetError(&hi2c1);// failure LED
+
+
+
+
+
        uint32_t e1 = error;
   }
+
+  initializeLCD();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_I2C_Master_Transmit(&hi2c1, (0x27<<1), testData, 1, 500);
+	  HAL_Delay(10);
+	  uint32_t error = HAL_I2C_GetError(&hi2c1);// failure LED
+	  uint32_t e1 = error;
+
+		  char dummyC = 0x24;
+	outputChar(dummyC);
+	HAL_Delay(1000);
     /* USER CODE END WHILE */
+
 
     /* USER CODE BEGIN 3 */
   }

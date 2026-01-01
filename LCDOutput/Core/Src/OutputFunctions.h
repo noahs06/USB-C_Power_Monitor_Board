@@ -20,6 +20,6 @@ void sendCommand(char cmd);
 void initializeLCD(void);
 void outputWords(char* words);
 void outputNums(uint32_t nums);
-void outputChars(char character);
+void outputChar(char character);
 
 #endif /* SRC_OUTPUTFUNCTIONS_H_ */
