@@ -81,7 +81,14 @@ void outputChar(char character){
 
 }
 
+void outputWords (char *words){
 
+	while(*words != '\0'){
+		outputChar(*words);
+		*words++;
+	}
+
+}
 
 
 

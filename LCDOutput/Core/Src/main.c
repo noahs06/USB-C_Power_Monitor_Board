@@ -112,20 +112,14 @@ int main(void)
   }
 
   initializeLCD();
+  outputWords("Hello World!");
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_I2C_Master_Transmit(&hi2c1, (0x27<<1), testData, 1, 500);
-	  HAL_Delay(10);
-	  uint32_t error = HAL_I2C_GetError(&hi2c1);// failure LED
-	  uint32_t e1 = error;
 
-		  char dummyC = 0x24;
-	outputChar(dummyC);
-	HAL_Delay(1000);
     /* USER CODE END WHILE */
 
 
