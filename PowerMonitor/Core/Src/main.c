@@ -19,6 +19,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "OutputFunctions.h"
+#define CLEAR 0x01
+#define CURRENT_REG 0x01
+#define VOLTAGE_REG 0x02
+#define PWR_REG 0x03
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -72,7 +76,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+int rawVoltage, rawCurrent, rawPower;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -98,8 +102,28 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 initializeLCD();
-outputWords("Hello");
-outputWords("World");
+
+uint32_t status = HAL_I2C_IsDeviceReady(&hi2c2, (0x40<<1), 5, 100);
+
+if(status != HAL_OK){
+	outputWords("INA ERROR");
+}else{
+	for(int i = 0; i < 3; i++){
+	sendCommand(0x01);
+	HAL_Delay(1000);
+	setCursor(0,0);
+	outputWords("INA READY");
+	HAL_Delay(1000);
+	sendCommand(CLEAR);
+	HAL_Delay(50);
+	setCursor(0, 0);
+	HAL_Delay(50);
+	outputWords("Hello!");
+	HAL_Delay(1000);
+	}
+	sendCommand(CLEAR);
+}
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -108,7 +132,21 @@ outputWords("World");
   {
 
     /* USER CODE END WHILE */
-
+rawVoltage = readINA(VOLTAGE_REG);
+rawCurrent = readINA(CURRENT_REG);
+float voltage = rawVoltage * 0.00125f;
+float current = rawCurrent * 0.00125f;
+float current_mA = current * 1000;
+float power = voltage * current;
+float power_mW = power * 1000;
+rawPower = readINA(PWR_REG);
+HAL_Delay(1000);
+sendCommand(CLEAR);
+HAL_Delay(10);
+displayFloat(current_mA, 0 ,0);
+outputWords(" mA");
+displayFloat(power_mW, 1, 0);
+outputWords(" mW");
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

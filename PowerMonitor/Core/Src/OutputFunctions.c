@@ -56,7 +56,7 @@ void initializeLCD(void){ //send commands following a specific order according t
 	HAL_Delay(5);
 	sendCommand(0x06); // set entry mode, s = 0 (no shift)
 	HAL_Delay(5);
-	sendCommand(0x0F); // Display on/off, D = 1, display on, C and B = 0 (cursor and blink = 0)
+	sendCommand(0x0C); // Display on/off, D = 1, display on, C and B = 0 (cursor and blink = 0)
 
 }
 
@@ -85,11 +85,45 @@ void outputWords (char *words){
 
 	while(*words != '\0'){
 		outputChar(*words);
+		HAL_Delay(10);
 		*words++;
 	}
 
 }
 
 
+void setCursor (int row, int col){
+
+	if(row == 0){
+		col|= 0x80;
+		sendCommand(col);
+	}else if(row == 1){
+		col|= 0xC0;
+		sendCommand(col);
+	}
+
+}
+
+int readINA(int reg){
+	uint8_t receive[2];
+
+	HAL_I2C_Mem_Read(&hi2c2, (0x40 << 1), reg, I2C_MEMADD_SIZE_8BIT, receive, 2, HAL_MAX_DELAY);
+
+	return ((receive[0]<<8) | receive[1]);// converts endian
+
+}
+
+void displayFloat(float flt, int row, int col){
+
+if(flt > 5){
+	char fltStr[7]; // nearest 100th of a milliAmp/Watt
+	sprintf(fltStr, "%.3f", flt);
+	setCursor(row, col);
+	outputWords(fltStr);
+
+}else{
+	char fltStr[6]; // nearest mV
+}
 
 
+}
