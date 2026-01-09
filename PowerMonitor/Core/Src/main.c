@@ -23,6 +23,7 @@
 #define CURRENT_REG 0x01
 #define VOLTAGE_REG 0x02
 #define PWR_REG 0x03
+uint8_t DEVICE_ADDR = 0x3F;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -100,6 +101,13 @@ int rawVoltage, rawCurrent, rawPower;
   MX_I2C1_Init();
   MX_I2C2_Init();
   MX_USART2_UART_Init();
+
+  for(uint8_t addr = 1; addr < 127; addr++) {
+      if(HAL_I2C_IsDeviceReady(&hi2c1, addr<<1, 1, 10) == HAL_OK) {
+          printf("Device found at 0x%X\n", addr);
+          DEVICE_ADDR = addr;
+      }
+  }
   /* USER CODE BEGIN 2 */
 initializeLCD();
 
@@ -110,16 +118,16 @@ if(status != HAL_OK){
 }else{
 	for(int i = 0; i < 3; i++){
 	sendCommand(0x01);
-	HAL_Delay(1000);
+	HAL_Delay(100);
 	setCursor(0,0);
 	outputWords("INA READY");
-	HAL_Delay(1000);
+	HAL_Delay(100);
 	sendCommand(CLEAR);
 	HAL_Delay(50);
 	setCursor(0, 0);
 	HAL_Delay(50);
 	outputWords("Hello!");
-	HAL_Delay(1000);
+	HAL_Delay(100);
 	}
 	sendCommand(CLEAR);
 }
@@ -147,6 +155,8 @@ displayFloat(current_mA, 0 ,0);
 outputWords(" mA");
 displayFloat(power_mW, 1, 0);
 outputWords(" mW");
+displayFloat(voltage, 2, 0);
+outputWords(" V");
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

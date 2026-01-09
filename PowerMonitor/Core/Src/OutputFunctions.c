@@ -10,7 +10,7 @@
 
 #include "OutputFunctions.h"
 
-
+extern int DEVICE_ADDR;
 
 void sendCommand(char command){
 
@@ -100,8 +100,12 @@ void setCursor (int row, int col){
 	}else if(row == 1){
 		col|= 0xC0;
 		sendCommand(col);
+	}else if(row == 2){
+	sendCommand(0x94);
+	}else if(row == 3){
+		sendCommand(0xD4);
 	}
-
+// CONSULT DATASHEET AND MEMORY LAYOUT FOR SETCURSOR VALUES. Not linear.
 }
 
 int readINA(int reg){
@@ -123,6 +127,9 @@ if(flt > 5){
 
 }else{
 	char fltStr[6]; // nearest mV
+	sprintf(fltStr, "%.3f", flt);
+		setCursor(row, col);
+		outputWords(fltStr);
 }
 
 

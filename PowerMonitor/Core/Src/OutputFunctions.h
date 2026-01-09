@@ -8,7 +8,9 @@
 #ifndef SRC_OUTPUTFUNCTIONS_H_
 #define SRC_OUTPUTFUNCTIONS_H_
 
-#define DEVICE_ADDR 0x27
+
+
+
 #include "main.h"
 
 extern I2C_HandleTypeDef hi2c1;
